@@ -66,7 +66,7 @@ func validateTimeoutValue() error {
 func validateOutputFormat() error {
 	format := strings.ToLower(_gFlags.outputFormat)
 	switch format {
-	case "json", "yaml":
+	case "json", "yaml", "simple":
 		_gFlags.outputFormat = strings.ToLower(format)
 	default:
 		return _errInvalidOutputFormat
@@ -100,6 +100,19 @@ func validateAndResolveServers(servers []string) ([]string, error) {
 	}
 
 	return endpoints, nil
+}
+
+func buildOutputMarshaller(format string) marshaller {
+	switch format {
+	case "json":
+		return newJSONMarshaller()
+	case "simple":
+		return newDefaultMarshaller()
+	case "yaml":
+		return newYAMLMarshaller()
+	default:
+		panic("not implemented yet")
+	}
 }
 
 func getDiscoveryServiceTypeUrl(apiVersion, ds string) (string, error) {

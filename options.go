@@ -50,13 +50,13 @@ type globalFlags struct {
 }
 
 type context struct {
-	rootCtx       gcontext.Context
-	rootCancel    gcontext.CancelFunc
-	flags         *globalFlags
-	endpoints     []string
-	typeUrl       string
-	outMarshaller marshaller
-	nodeMeta      *_struct.Struct
-	wg            sync.WaitGroup
-	interc        chan os.Signal
+	rootCtx    gcontext.Context
+	rootCancel gcontext.CancelFunc
+	flags      *globalFlags
+	endpoints  []string
+	typeUrl    string
+	marshaller marshaller
+	nodeMeta   *_struct.Struct
+	wg         sync.WaitGroup
+	interc     chan os.Signal
 }

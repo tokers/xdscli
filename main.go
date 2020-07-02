@@ -46,7 +46,7 @@ const (
 func init() {
 	_rootCmd.PersistentFlags().BoolVarP(&_gFlags.showVersion, "version", "v", false, "show the version of xdscli")
 	_rootCmd.PersistentFlags().StringSliceVar(&_gFlags.servers, "servers", nil, "xDS server addresses")
-	_rootCmd.PersistentFlags().StringVar(&_gFlags.outputFormat, "write-out", "json", "set the output format (json, yaml)")
+	_rootCmd.PersistentFlags().StringVar(&_gFlags.outputFormat, "write-out", "simple", "set the output format (json, yaml, simple)")
 	_rootCmd.PersistentFlags().DurationVar(&_gFlags.dialTimeout, "dial-timeout", _defaultDialTimeout, "dial timeout for client connections")
 
 	_rootCmd.PersistentFlags().StringVar(&_gFlags.xds.node, "node", "", "the node making the request")
@@ -87,8 +87,8 @@ func rootCommandFunc(cmd *cobra.Command, args []string) {
 		exitWithError(_exitError, err)
 	}
 
+	marshaller := buildOutputMarshaller(_gFlags.outputFormat)
 	nodeMeta, err := buildNodeMetadata(_gFlags.xds.nodeMetadata)
-
 	rootCtx, cancel := gcontext.WithCancel(gcontext.Background())
 
 	signalc := make(chan os.Signal, 1)
@@ -103,6 +103,7 @@ func rootCommandFunc(cmd *cobra.Command, args []string) {
 		typeUrl:    typeUrl,
 		nodeMeta:   nodeMeta,
 		wg:         sync.WaitGroup{},
+		marshaller: marshaller,
 	}
 
 	if err := doDiscoveryService(&ctx); err != nil {

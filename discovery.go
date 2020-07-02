@@ -115,7 +115,11 @@ func doDiscoveryService(ctx *context) error {
 			finalize()
 			return err
 		case resp := <-suite.respc:
-			fmt.Println(resp)
+			data, err := ctx.marshaller.marshal(resp)
+			if err != nil {
+				panic(err)
+			}
+			fmt.Println(data)
 			return nil
 		}
 	}

@@ -37,6 +37,7 @@ var (
 	_errInvalidNode                = errors.New("invalid --node value")
 	_errInvalidNodeMetaFormat      = errors.New("invalid --node-metadata value")
 	_errInvalidGRPCMaxCallRecvSize = errors.New("invalid --grpc-max-call-recv-size")
+	_errUnknownTypeUrl             = errors.New("server sent unknown resource type url")
 )
 
 func exitWithError(code int, err error) {
