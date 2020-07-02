@@ -15,11 +15,15 @@
 package main
 
 import (
+	gcontext "context"
+	"os"
+	"sync"
 	"time"
+
+	_struct "github.com/golang/protobuf/ptypes/struct"
 )
 
-// xdsFlags are flags the defined about the
-// DiscoveryRequest/DeltaDiscoveryRequest.
+// xdsFlags are flags the defined about the DiscoveryRequest.
 type xdsFlags struct {
 	node               string
 	nodeMetadata       string
@@ -29,18 +33,30 @@ type xdsFlags struct {
 	apiVersion         string
 }
 
-// globalFlags are flags that defined globally and are inherited to all
-// sub-commands.
+// globalFlags are flags that defined globally.
 type globalFlags struct {
 	xds xdsFlags
 
 	dialTimeout time.Duration
 	readTimeout time.Duration
 	sendTimeout time.Duration
-	timeout     time.Duration
+
+	grpcMaxCallRecvSize int
 
 	outputFormat string
 	servers      []string
-	wait         bool
+	watch        bool
 	showVersion  bool
+}
+
+type context struct {
+	rootCtx       gcontext.Context
+	rootCancel    gcontext.CancelFunc
+	flags         *globalFlags
+	endpoints     []string
+	typeUrl       string
+	outMarshaller marshaller
+	nodeMeta      *_struct.Struct
+	wg            sync.WaitGroup
+	interc        chan os.Signal
 }

@@ -29,7 +29,14 @@ const (
 )
 
 var (
-	_errNoServers = errors.New("no servers")
+	_errNoServers                  = errors.New("no servers")
+	_errInvalidDialTimeout         = errors.New("invalid --dial-timeout value")
+	_errInvalidReadTimeout         = errors.New("invalid --read-timeout value")
+	_errInvalidSendTimeout         = errors.New("invalid --send-timeout value")
+	_errInvalidOutputFormat        = errors.New("invalid --write-out value")
+	_errInvalidNode                = errors.New("invalid --node value")
+	_errInvalidNodeMetaFormat      = errors.New("invalid --node-metadata value")
+	_errInvalidGRPCMaxCallRecvSize = errors.New("invalid --grpc-max-call-recv-size")
 )
 
 func exitWithError(code int, err error) {
