@@ -120,7 +120,6 @@ func doDiscoveryService(ctx *context) error {
 				panic(err)
 			}
 			fmt.Println(data)
-			return nil
 		}
 	}
 
@@ -132,7 +131,6 @@ func receiveThread(ctx *context, adsClient discoveryv2.AggregatedDiscoveryServic
 
 	resp, err := adsClient.Recv()
 	if err != nil {
-		fmt.Println(err)
 		suite.errc <- err
 		select {
 		case <-suite.stopc:
@@ -144,8 +142,23 @@ func receiveThread(ctx *context, adsClient discoveryv2.AggregatedDiscoveryServic
 	suite.ackc <- nonce
 	suite.respc <- resp
 
-	if ctx.flags.watch {
+	if !ctx.flags.watch {
 		return
+	}
+
+	for {
+		resp, err := adsClient.Recv()
+		if err != nil {
+			suite.errc <- err
+			select {
+			case <-suite.stopc:
+				return
+			}
+		}
+
+		nonce := resp.Nonce
+		suite.ackc <- nonce
+		suite.respc <- resp
 	}
 }
 
