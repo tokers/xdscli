@@ -120,6 +120,10 @@ func doDiscoveryService(ctx *context) error {
 				panic(err)
 			}
 			fmt.Println(data)
+			if !ctx.flags.watch {
+				finalize()
+				return nil
+			}
 		}
 	}
 
@@ -177,10 +181,6 @@ func sendThread(ctx *context, adsClient discoveryv2.AggregatedDiscoveryService_S
 		}
 	}
 
-	if !ctx.flags.watch {
-		return
-	}
-
 	for {
 		select {
 		case <-suite.stopc:
@@ -194,6 +194,9 @@ func sendThread(ctx *context, adsClient discoveryv2.AggregatedDiscoveryService_S
 				case <-suite.stopc:
 					return
 				}
+			}
+			if !ctx.flags.watch {
+				return
 			}
 		}
 	}
